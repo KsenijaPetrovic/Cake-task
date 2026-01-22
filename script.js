@@ -20,22 +20,20 @@ for(let i = 0; i < 5; i++){ //da se izvrti 5puta jer imamo 5 kolona
 
     }
 
-    lightsCont.appendChild(c);
+    lightsCont.appendChild(c); 
     columns.push(lights);
 }
 
 let step = 0;
-let timer = null;
-let mode = null;
 
 function clear(){
-    columns.flat().forEach(l =>{l.classList.remove("red", "green");}); //da sve pogasimo (da budu crni)
+    columns.flat().forEach(l =>{l.classList.remove("red", "green");}); //da sve pogasim (da budu crni)
 }
 
 function stepClick() {
-    clear();
+    clear(); //na pocetku sve gasim
 
-    phaseTxt.textContent = phase[step];
+    phaseTxt.textContent = phase[step]; //ispisujem fazu na vrhu stranice
 
     if(step >= 1 && step <= 5){
         for(let i = 0; i < step; i++){
@@ -44,7 +42,7 @@ function stepClick() {
         }
     }
 
-    if (step === 6) {
+    if (step === 6) { //na 6. korak se pale gornja dva reda zeleno
         columns.forEach(col => {
           col[0].classList.add("green");
           col[1].classList.add("green");
@@ -53,7 +51,7 @@ function stepClick() {
 
 }
 
-function nextStep(){
+function click(){
     step++;
 
     if(step > 6){
@@ -63,6 +61,83 @@ function nextStep(){
     stepClick();
 }
 
+let timer = null;
+let mode = null;
+
+function reset(){
+    clearInterval(timer); //resetujem tajmer, da ne pamti prethodna izvrsavanja
+    timer = null;
+    mode = null;
+
+    automaticBtn.textContent = "automatic stepping: off"; //stavljamo dugmice na off
+    randomBtn.textContent = "random stepping: off";
+}
+
 document.getElementById("manualBtn").onclick = () => {
-    nextStep();
+    reset();
+    click();
+}
+
+function auto(random = false){
+    reset();
+
+    const duration = document.getElementById("stepDuration");
+    if(random === true){
+        mode = "random";
+    }else {
+        mode = "automatic";
+    }
+
+    //tekst na dugmicima
+    if(automaticBtn.textContent = mode === "automatic"){
+        automaticBtn.textContent = "automatic stepping: on";
+    }else{
+        automaticBtn.textContent = "automatic stepping: off";
+    }
+
+    if(randomBtn.textContent = mode === "random"){
+        randomBtn.textContent = "random stepping: on";
+    }else{
+        randomBtn.textContent = "random stepping: off";
+    }
+
+    if(randomBtn)
+
+    timer = setInterval(() => {
+        if(mode === "random"){
+            step = Math.floor(Math.random() * 7); //da uzme random broj od 0 do 6, 
+        }else{
+            click(); //ako nije u random fazi ide normalno od 0 do 6
+        }
+
+        stepClick(); //da bi se ispisalo
+
+        if(step === 6){
+            clearInterval(timer);
+            setTimeout(() => {
+                if(mode){
+                    auto(mode === "random");
+                }
+            }, duration.value*2);
+        }
+
+
+
+    }, duration.value);
+}
+
+document.getElementById("automaticBtn").onclick = () => {
+    if(mode === "automatic"){
+        reset();
+    }else{
+        auto(false);
+    }
+}
+
+document.getElementById("randomBtn").onclick = () => {
+    if(mode === "random"){
+        reset();
+    }else{
+        auto(true);
+    }
 }
