@@ -1,4 +1,4 @@
-const phase = ["", "HOLD I", "HOLD II", "HOLD III", "HOLD IV", "PREPARE", "GO!"];
+const part = ["", "HOLD I", "HOLD II", "HOLD III", "HOLD IV", "PREPARE", "GO!"];
 
 const phaseTxt = document.getElementById("stepText");
 const lightsCont = document.getElementById("lights");
@@ -33,7 +33,7 @@ function clear(){
 function stepClick() {
     clear(); //na pocetku sve gasim
 
-    phaseTxt.textContent = phase[step]; //ispisujem fazu na vrhu stranice
+    phaseTxt.textContent = part[step]; //ispisujem fazu na vrhu stranice
 
     if(step >= 1 && step <= 5){
         for(let i = 0; i < step; i++){
@@ -78,8 +78,25 @@ document.getElementById("manualBtn").onclick = () => {
     click();
 }
 
+function confirmDuration(){
+    const dur = (document.getElementById("stepDuration")).value.trim(); //uzimam vrednost iz polja i uklanjam odmah razmake ako imaju ispred ili iza
+
+    if(dur === "" || dur <= 0){
+        alert("the step duration field must be filled with positive number!");
+        return null;
+    }
+
+    return Number(dur); //pretvaram u broj
+
+}
+
 function auto(random = false){
     reset();
+
+    const dur = confirmDuration();
+    if(dur === null){
+        return; //ako nema napisana vrednost izlazi iz funkcije
+    }
 
     const duration = document.getElementById("stepDuration");
     if(random === true){
@@ -101,7 +118,6 @@ function auto(random = false){
         randomBtn.textContent = "random stepping: off";
     }
 
-    if(randomBtn)
 
     timer = setInterval(() => {
         if(mode === "random"){
